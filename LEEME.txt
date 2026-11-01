@@ -1,0 +1,30 @@
+OPTICORTE — EDICIÓN ANDROID SIN CONEXIÓN
+
+Incluye:
+- Aplicación web instalable (PWA) para Android.
+- Caché offline de HTML, manifiesto, iconos y service worker.
+- Datos y proyectos guardados localmente en el dispositivo.
+- Materiales configurables, dimensiones de tablero, kerf y margen.
+- Piezas rectangulares en cm o mm; optimización por material.
+- Rotación, varios tableros y ajuste manual arrastrando piezas.
+- Planos imprimibles para TODOS los tableros, con piezas, dimensiones,
+  coordenadas X/Y, giro, formato, kerf y margen.
+- Exportación a PDF mediante Imprimir > Guardar como PDF.
+- Exportación CSV e importación/exportación JSON.
+
+INSTALACIÓN:
+1. Publica el contenido de la carpeta opticorte en un sitio HTTPS.
+   La instalación PWA y el service worker requieren HTTPS (o localhost).
+2. Conecta el teléfono a Internet una vez y abre la URL en Chrome Android.
+3. Espera a que cargue la aplicación y el service worker almacene los archivos.
+4. Menú ⋮ > Instalar aplicación / Agregar a pantalla principal.
+5. Después de la primera carga, abre OptiCorte desde su icono; las funciones
+   principales funcionan sin Internet.
+
+IMPORTANTE:
+- Esta entrega es una PWA instalable, no un APK firmado.
+- El modo offline funciona después de la primera visita online.
+- El optimizador es heurístico 2D rectangular; no garantiza el óptimo global.
+- No genera todavía secuencia industrial de sierra, optimización de veta,
+  defectos, canteado ni CNC. Verifica siempre los planos antes de cortar.
+- Los archivos y proyectos se almacenan en el navegador de ese dispositivo.
