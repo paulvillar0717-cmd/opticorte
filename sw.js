@@ -46,7 +46,4 @@ self.addEventListener('fetch', event => {
   })());
 });
 
-      return caches.match('./index.html');
-    }
-  })());
-});
+
