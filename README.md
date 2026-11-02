@@ -1,2 +1,2 @@
-# opticorte
+# opticorte pro
 optimizador de cortes free
