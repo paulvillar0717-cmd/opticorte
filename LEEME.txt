@@ -1,21 +1,17 @@
-OPTICORTE PRO - VERSION LIMPIA
-================================
-Sube el contenido de esta carpeta directamente a la raíz del repositorio GitHub Pages, reemplazando los archivos anteriores.
+OPTICORTE PRO - PLANOS CON LINEAS ROJAS NUMERADAS
+===================================================
+Sube TODOS los archivos de esta carpeta a la raíz del repositorio GitHub Pages y reemplaza los anteriores.
 
-Archivos: index.html, manifest.webmanifest, sw.js, icon-192.png, icon-512.png y LEEME.txt.
+En Planos, cada tablero dibuja las pasadas de sierra como líneas rojas discontinuas numeradas. La tabla de abajo usa exactamente la misma numeración e indica orientación, posición y tramo del corte.
 
-Incluye:
-- Interfaz renovada con flujo Configuración / Tableros / Piezas / Planos.
-- Registro de materiales, formatos, stock y precio.
-- Piezas con cantidad, medidas y opción de veta.
-- Parámetros de kerf, margen y rotación.
-- Distribución rectangular 2D heurística y diagramas de tablero.
-- Importación/exportación CSV compatible con Excel.
-- Respaldo JSON, impresión/PDF y guardado local.
-- PWA instalable y caché offline tras primera visita.
+Archivos:
+- index.html
+- manifest.webmanifest
+- sw.js
+- icon-192.png
+- icon-512.png
+- LEEME.txt
 
-Limitaciones importantes:
-- CSV compatible con Excel, no XLSX nativo.
-- Algoritmo heurístico 2D: no garantiza óptimo global.
-- No genera una secuencia industrial certificada de corte guillotina.
-- Verifica todos los planos y medidas antes de cortar.
+La secuencia se genera a partir de divisiones rectangulares tipo guillotina. Es una guía geométrica para planificar el trabajo, no una simulación de todos los movimientos del carro ni un programa CNC. Confirma la referencia de medida, el tope, el sentido de avance, el kerf real y la sujeción de cada pieza en tu escuadradora. Usa siempre resguardos y empujadores. Revisa cada plano antes de cortar.
+
+Importación/exportación CSV compatible con Excel; no XLSX nativo. El optimizador es heurístico y puede no encontrar el aprovechamiento global óptimo.
