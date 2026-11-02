@@ -1,0 +1,25 @@
+PANELCUT PRO - APLICACION NUEVA
+================================
+Sube todos los archivos a la raiz de tu repositorio GitHub Pages, reemplazando los anteriores:
+- index.html
+- manifest.webmanifest
+- sw.js
+- icon-192.png
+- icon-512.png
+- LEEME.txt
+
+Incluye:
+- Interfaz de tres zonas inspirada en el flujo de CutList Optimizer: piezas/stock/opciones a la izquierda, planos al centro y cortes numerados a la derecha.
+- Lista de piezas con largo, ancho, cantidad, etiqueta y material.
+- Varios formatos de tablero con dimensiones, espesor, stock.
+- Giro del tablero 90 grados y giro individual de piezas.
+- Kerf y margen perimetral.
+- Prueba de heurísticas de ordenación, selección por menor cantidad de tableros y menor desperdicio calculado.
+- Diagramas de cada tablero con líneas rojas discontinuas numeradas; la lista de cortes coincide con los números del dibujo.
+- Retales representados en el plano y cálculo de aprovechamiento/desperdicio.
+- CSV compatible con Excel, plantilla CSV, respaldo JSON, impresión/PDF.
+- PWA instalable y funcionamiento offline tras la primera carga.
+
+LIMITACIONES Y SEGURIDAD:
+La optimización es heurística 2D guillotina y no garantiza el óptimo global. Los retales se identifican como sobrantes aprovechables, pero no se guardan automáticamente como stock para el siguiente proyecto. La guía es geométrica, no simula todos los movimientos de carro/tope ni controla la máquina. Confirma dimensiones, referencia de tope, sentido de avance, kerf real y estabilidad de cada pieza. Mantén resguardos y usa empujadores. No retirar protecciones. Verifica cada plano antes de cortar.
+Importación/exportación CSV compatible con Excel; no lee XLSX nativo.

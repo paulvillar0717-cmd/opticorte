@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#172b35">
+<meta name="description" content="Optimizador de cortes de tableros con planos y guía numerada para escuadradora.">
+<link rel="manifest" href="./manifest.webmanifest">
+<title>PanelCut Pro</title>
+<style>
+:root{--nav:#172b35;--nav2:#243e49;--green:#16845b;--green2:#dff2e9;--red:#d92727;--blue:#2869b2;--ink:#202b30;--muted:#718087;--line:#d7e0e3;--bg:#eef2f3;--white:#fff;--orange:#f0a12e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font:13px/1.4 Inter,system-ui,Segoe UI,Arial,sans-serif;color:var(--ink)}
+header{height:56px;background:var(--nav);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;gap:10px;position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800}.logo{width:31px;height:31px;border-radius:7px;background:#e7f4ee;color:var(--green);display:grid;place-items:center;font-weight:900}
+.head-actions{display:flex;align-items:center;gap:8px}.status{font-size:11px;color:#c8d7dc}
+button{font:inherit;cursor:pointer}.btn{border:1px solid #cbd6da;background:#f6f8f9;color:#30434b;padding:8px 11px;border-radius:6px;font-weight:650}.btn:hover{filter:brightness(.97)}.btn.primary{background:var(--green);color:#fff;border-color:var(--green)}.btn.dark{background:var(--nav2);color:#fff;border-color:var(--nav2)}.btn.danger{color:#b72a2a;background:#fff3f3;border-color:#f0cece}.btn.small{padding:5px 8px;font-size:11px}
+.app{display:grid;grid-template-columns:300px minmax(390px,1fr) 290px;min-height:calc(100vh - 56px)}
+.left,.right{background:#fff;overflow:auto;max-height:calc(100vh - 56px);position:sticky;top:56px}
+.left{border-right:1px solid var(--line)}.right{border-left:1px solid var(--line)}
+.center{padding:14px;min-width:0}
+.section{border-bottom:1px solid var(--line)}.section-head{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;background:#f7f9fa;font-weight:800;color:#34474f}.section-body{padding:10px 12px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.field label{display:block;font-size:10px;color:var(--muted);font-weight:750;margin:0 0 4px;text-transform:uppercase;letter-spacing:.25px}
+input,select{width:100%;min-width:0;border:1px solid #cbd6da;border-radius:5px;padding:8px 7px;background:#fff;color:var(--ink);font:inherit}
+input:focus,select:focus{outline:2px solid #b9e1d0;border-color:var(--green)}
+.full{grid-column:1/-1}.row{display:flex;gap:7px;align-items:center}.row>*{flex:1}.toggle{display:flex;align-items:center;gap:7px;margin:8px 0;font-size:11px;color:#485a61}.toggle input{width:auto}
+.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:11px}th,td{border-bottom:1px solid #e5eaec;padding:7px 6px;text-align:left;white-space:nowrap}th{background:#f4f7f8;color:#68777d;font-size:10px;text-transform:uppercase;position:sticky;top:0}
+.data-table input{width:72px;padding:5px}.data-table .code{width:92px}
+.mini-tabs{display:flex;background:#e8edef;padding:3px;border-radius:7px;margin-bottom:9px}.mini-tabs button{border:0;background:transparent;flex:1;padding:7px 3px;border-radius:5px;font-size:11px;font-weight:700}.mini-tabs button.active{background:#fff;color:var(--green);box-shadow:0 1px 3px #0001}
+.center-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.center-top h2{font-size:17px;margin:0}.center-top .actions{display:flex;gap:6px;flex-wrap:wrap}
+.summary{display:grid;grid-template-columns:repeat(4,minmax(90px,1fr));gap:8px;margin-bottom:12px}.metric{background:#fff;border:1px solid var(--line);border-radius:7px;padding:9px}.metric b{display:block;font-size:19px;color:#1b6448}.metric span{font-size:10px;color:var(--muted)}
+.board-card{background:#fff;border:1px solid var(--line);border-radius:8px;margin-bottom:13px;overflow:hidden}.board-head{padding:10px 12px;background:#f7f9fa;display:flex;justify-content:space-between;align-items:center;gap:8px}.board-head strong{font-size:13px}.board-head small{color:var(--muted)}
+.board-body{padding:10px}.board-svg{width:100%;height:auto;max-height:570px;display:block;background:#fff}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:10px;color:#627078;margin:6px 0}.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:4px}
+.empty{padding:35px 15px;text-align:center;color:#77868c;background:#fff;border:1px dashed #c8d3d7;border-radius:8px}
+.right h3{font-size:13px;margin:0;padding:12px;border-bottom:1px solid var(--line);background:#f7f9fa}.right .right-block{padding:10px 11px;border-bottom:1px solid var(--line)}
+.cut-row{display:grid;grid-template-columns:27px 1fr;gap:7px;padding:7px 0;border-bottom:1px solid #edf0f1}.cut-n{width:23px;height:23px;border-radius:50%;background:var(--red);color:white;display:grid;place-items:center;font-weight:800;font-size:11px}.cut-row b{display:block;font-size:11px}.cut-row small{color:var(--muted);font-size:10px}
+.notice{background:#fff8e9;border:1px solid #f2d9a9;border-radius:6px;padding:9px;font-size:10px;color:#715322;line-height:1.5}
+.footer-note{font-size:10px;color:var(--muted);padding:12px}
+.modalback{position:fixed;inset:0;background:#10212bcc;display:none;align-items:center;justify-content:center;z-index:20;padding:15px}.modal{background:#fff;border-radius:10px;max-width:620px;width:100%;max-height:85vh;overflow:auto;padding:18px}.modal h2{margin:0 0 12px}
+.hidden{display:none!important}
+@media(max-width:1050px){.app{grid-template-columns:270px minmax(360px,1fr)}.right{grid-column:1/-1;position:static;max-height:none;border-left:0;border-top:1px solid var(--line)}.right .cut-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}}
+@media(max-width:680px){header{height:auto;min-height:54px;padding:9px 11px}.app{display:flex;flex-direction:column}.left,.right{position:static;max-height:none;border:0}.center{order:2;padding:9px}.left{order:1}.right{order:3}.summary{grid-template-columns:repeat(2,1fr)}.right .cut-list{display:block}.section-body{padding:9px 11px}}
+@media print{header,.left,.right,.center-top .actions,.footer-note{display:none!important}.app{display:block}.center{padding:0}.board-card{break-after:page;border:0}.board-card:last-child{break-after:auto}.board-svg{max-height:175mm}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="logo">PC</div> PanelCut Pro <span style="font-size:10px;font-weight:500;color:#b9cbd1">OPTIMIZADOR DE TABLEROS</span></div>
+ <div class="head-actions"><span class="status" id="saveStatus">● Guardado local</span><button class="btn dark small" id="helpBtn">Ayuda</button></div>
+</header>
+<div class="app">
+<aside class="left">
+ <div class="section">
+  <div class="section-head"><span>▤ PIEZAS</span><span id="pieceTotal">0</span></div>
+  <div class="section-body">
+   <div class="formgrid">
+    <div class="field"><label>Largo (mm)</label><input id="pL" type="number" value="500" min="1"></div>
+    <div class="field"><label>Ancho (mm)</label><input id="pW" type="number" value="300" min="1"></div>
+    <div class="field"><label>Cantidad</label><input id="pQty" type="number" value="2" min="1"></div>
+    <div class="field"><label>Etiqueta</label><input id="pLabel" value="Pieza"></div>
+    <div class="field full"><label>Material / tablero</label><select id="pMat"></select></div>
+   </div>
+   <label class="toggle"><input id="pCanRotate" type="checkbox" checked> Permitir girar esta pieza</label>
+   <div class="row"><button class="btn primary" id="addPiece">+ Añadir</button><button class="btn" id="importBtn">Importar CSV</button></div>
+   <div class="tablewrap" style="margin-top:9px"><table class="data-table"><thead><tr><th>Largo</th><th>Ancho</th><th>Cant.</th><th>Etiqueta</th><th></th></tr></thead><tbody id="pieceRows"></tbody></table></div>
+   <div class="row" style="margin-top:8px"><button class="btn small" id="exportPieces">Exportar CSV</button><button class="btn small" id="templateCsv">Plantilla</button></div>
+   <input type="file" id="csvFile" accept=".csv,text/csv" class="hidden">
+  </div>
+ </div>
+ <div class="section">
+  <div class="section-head"><span>▦ STOCK / TABLEROS</span><button class="btn small" id="addStockBtn">+ Nuevo</button></div>
+  <div class="section-body">
+   <div id="stockRows"></div>
+   <div class="notice" style="margin-top:8px">Registra aquí el tamaño real del tablero, cantidad disponible y espesor. Puedes elegir si el optimizador puede girar el tablero completo.</div>
+  </div>
+ </div>
+ <div class="section">
+  <div class="section-head">⚙ OPCIONES</div>
+  <div class="section-body">
+   <div class="formgrid">
+    <div class="field"><label>Espesor disco / kerf (mm)</label><input id="kerf" type="number" value="3.2" min="0" step=".1"></div>
+    <div class="field"><label>Margen perimetral (mm)</label><input id="trim" type="number" value="10" min="0" step=".5"></div>
+    <div class="field full"><label>Optimización</label><select id="strategy"><option value="best">Mejor aprovechamiento (varios intentos)</option><option value="few">Menos tableros primero</option><option value="waste">Menor desperdicio por tablero</option></select></div>
+   </div>
+   <label class="toggle"><input id="allowBoardRotate" type="checkbox" checked> Permitir girar el tablero (90°)</label>
+   <label class="toggle"><input id="allowPieceRotate" type="checkbox" checked> Permitir girar las piezas (90°)</label>
+   <label class="toggle"><input id="showDims" type="checkbox" checked> Mostrar medidas en el plano</label>
+   <div class="row"><button class="btn primary" id="calculate">▶ CALCULAR / OPTIMIZAR</button></div>
+   <p class="footer-note">El programa prueba distintos órdenes de colocación y orientaciones para reducir tableros utilizados y área sobrante.</p>
+  </div>
+ </div>
+ <div class="section">
+  <div class="section-head">PROYECTO</div><div class="section-body">
+   <div class="row"><button class="btn small" id="saveProject">Guardar JSON</button><button class="btn small" id="loadProject">Abrir JSON</button><input id="jsonFile" type="file" accept=".json" class="hidden"></div>
+  </div>
+ </div>
+</aside>
+<main class="center">
+ <div class="center-top"><h2>Planos de corte</h2><div class="actions"><button class="btn" id="printBtn">Exportar / PDF</button><button class="btn" id="clearBtn">Limpiar</button></div></div>
+ <div class="summary" id="summary">
+  <div class="metric"><b>0</b><span>Tableros usados</span></div><div class="metric"><b>0%</b><span>Aprovechamiento</span></div><div class="metric"><b>0%</b><span>Desperdicio</span></div><div class="metric"><b>0</b><span>Cortes numerados</span></div>
+ </div>
+ <div id="boards"><div class="empty">Agrega tableros y piezas en el panel izquierdo. Después pulsa <b>CALCULAR / OPTIMIZAR</b>.</div></div>
+</main>
+<aside class="right">
+ <h3>ⓘ INFORMACIÓN / RESUMEN</h3>
+ <div class="right-block" id="infoPanel"><div class="notice">Los resultados y estadísticas aparecerán después de optimizar.</div></div>
+ <h3>☷ CORTES NUMERADOS</h3>
+ <div class="right-block"><div class="cut-list" id="cutList"><p class="footer-note">La lista de cortes aparecerá aquí, agrupada por tablero.</p></div></div>
+ <div class="right-block"><div class="notice"><b>Importante para escuadradora:</b> la numeración es una secuencia geométrica de cortes tipo guillotina. Comprueba topes, orientación, sentido de avance, kerf real y sujeción antes de ejecutar. No sustituye el manual ni los resguardos de la máquina.</div></div>
+</aside>
+</div>
+<div class="modalback" id="modal"><div class="modal"><div class="row"><h2 style="flex:1">Ayuda · PanelCut Pro</h2><button class="btn" id="closeHelp">Cerrar</button></div>
+<p><b>1. Stock:</b> agrega uno o más formatos de tablero, con dimensiones, espesor, cantidad y etiqueta.</p>
+<p><b>2. Piezas:</b> introduce largo, ancho, cantidad y material. Puedes habilitar giro de cada pieza.</p>
+<p><b>3. Opciones:</b> define kerf, margen, giro de tablero y giro de piezas.</p>
+<p><b>4. Optimizar:</b> el programa prueba distintas heurísticas de orden y orientación. Elige la solución con menor cantidad de tableros y menor desperdicio.</p>
+<p><b>5. Cortes rojos:</b> cada línea roja discontinua lleva un número que coincide con la lista de la derecha. Las posiciones se miden desde el borde del tablero mostrado.</p>
+<p class="notice">Limitaciones: optimización heurística 2D de cortes guillotina; no garantiza óptimo matemático ni simula todas las maniobras del carro de una escuadradora. Revisa el plano y la secuencia en la máquina antes de cortar.</p></div></div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+let stocks=[],parts=[],solutions=[];
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const val=id=>Math.max(0,Number($(id).value)||0);
+function saveLocal(){localStorage.setItem('panelcutpro-v1',JSON.stringify({stocks,parts,settings:{kerf:$('kerf').value,trim:$('trim').value,strategy:$('strategy').value,allowBoardRotate:$('allowBoardRotate').checked,allowPieceRotate:$('allowPieceRotate').checked,showDims:$('showDims').checked}}));$('saveStatus').textContent='● Guardado local';}
+function loadLocal(){try{let d=JSON.parse(localStorage.getItem('panelcutpro-v1')||'{}');stocks=d.stocks||[];parts=d.parts||[];let z=d.settings||{};if(z.kerf!==undefined)$('kerf').value=z.kerf;if(z.trim!==undefined)$('trim').value=z.trim;if(z.strategy)$('strategy').value=z.strategy;['allowBoardRotate','allowPieceRotate','showDims'].forEach(k=>{if(z[k]!==undefined)$(k).checked=z[k]});}catch(e){stocks=[];parts=[];}renderInputs();}
+function renderInputs(){
+ $('stockRows').innerHTML=stocks.map((s,i)=>`<div style="border:1px solid #e0e7e9;border-radius:6px;padding:8px;margin:6px 0"><div style="display:flex;justify-content:space-between;gap:6px"><b>${esc(s.label)}</b><button class="btn danger small" onclick="removeStock(${i})">×</button></div><div style="font-size:10px;color:#68777d">${s.L} × ${s.W} mm · ${s.thick} mm · stock ${s.qty} · ${s.rotatable?'girable':'fijo'}</div></div>`).join('')||'<p class="footer-note">No hay tableros registrados.</p>';
+ $('pMat').innerHTML=stocks.map((s,i)=>`<option value="${i}">${esc(s.label)} (${s.thick} mm)</option>`).join('')||'<option value="">Añade stock primero</option>';
+ $('pieceRows').innerHTML=parts.map((p,i)=>`<tr><td>${p.L}</td><td>${p.W}</td><td>${p.qty}</td><td>${esc(p.label)}</td><td><button class="btn danger small" onclick="removePart(${i})">×</button></td></tr>`).join('')||'<tr><td colspan="5">Sin piezas</td></tr>';
+ $('pieceTotal').textContent=parts.reduce((n,p)=>n+p.qty,0)+' uds.';saveLocal();
+}
+window.removeStock=i=>{stocks.splice(i,1);parts=parts.filter(p=>p.stock!==i).map(p=>({...p,stock:p.stock>i?p.stock-1:p.stock}));renderInputs();};
+window.removePart=i=>{parts.splice(i,1);renderInputs();};
+function addStock(){let label=prompt('Nombre del tablero / material','Melamina 18 mm');if(label===null)return;let L=Number(prompt('Largo del tablero en mm','2440')),W=Number(prompt('Ancho del tablero en mm','1830')),thick=Number(prompt('Espesor en mm','18')),qty=Number(prompt('Cantidad disponible','10'));if(![L,W,thick,qty].every(x=>x>0))return alert('Dimensiones y stock deben ser mayores que cero.');stocks.push({label,L,W,thick,qty:Math.floor(qty),rotatable:true});renderInputs();}
+$('addStockBtn').onclick=addStock;
+$('addPiece').onclick=()=>{if(!stocks.length)return alert('Agrega primero un tablero en STOCK.');let st=Number($('pMat').value);let L=val('pL'),W=val('pW'),qty=Math.floor(val('pQty'));if(!L||!W||!qty)return alert('Ingresa largo, ancho y cantidad válidos.');parts.push({stock:st,L,W,qty,label:$('pLabel').value.trim()||'Pieza',rotatable:$('pCanRotate').checked});renderInputs();};
+function expandPieces(stockIndex){let a=[];parts.forEach((p,pi)=>{if(p.stock!==stockIndex)return;for(let k=0;k<p.qty;k++)a.push({id:pi+'_'+k,label:p.label,L:p.L,W:p.W,rotatable:p.rotatable});});return a;}
+function makePacking(items,stock,boardNo,boardRot,sortMode,scoreMode){
+ let L=boardRot?stock.W:stock.L,W=boardRot?stock.L:stock.W,trim=val('trim'),kerf=val('kerf'),innerL=L-2*trim,innerW=W-2*trim;
+ if(innerL<=0||innerW<=0)return null;
+ let free=[{x:trim,y:trim,w:innerL,h:innerW}],placed=[],cuts=[],wasteRects=[];
+ for(let idx=0;idx<items.length;idx++){
+  let it=items[idx],best=null;
+  for(let fi=0;fi<free.length;fi++){let f=free[fi];for(let r=0;r<=( $('allowPieceRotate').checked&&it.rotatable?1:0);r++){let w=r?it.W:it.L,h=r?it.L:it.W;if(w<=f.w+0.001&&h<=f.h+0.001){let remA=f.w*f.h-w*h,short=Math.min(f.w-w,f.h-h),long=Math.max(f.w-w,f.h-h);let score=scoreMode===0?remA:scoreMode===1?short*100000+long:long*100000+short;if(!best||score<best.score)best={fi,r,w,h,x:f.x,y:f.y,score,free:f};}}}
+  if(!best)break;
+  let f=free.splice(best.fi,1)[0],id=placed.length+1;
+  placed.push({...it,x:best.x,y:best.y,w:best.w,h:best.h,rot:best.r,number:id});
+  // Guillo split: first horizontal cut creates a top strip and a lower remainder;
+  // then vertical cut in the top strip separates the part from its right-side remainder.
+  let rightW=f.w-best.w-kerf,bottomH=f.h-best.h-kerf;
+  if(bottomH>0){cuts.push({n:cuts.length+1,axis:'h',x1:f.x,y1:best.y+best.h+kerf,x2:f.x+f.w,y2:best.y+best.h+kerf,from:f.x,to:f.x+f.w,at:best.y+best.h+kerf,part:id,kind:'Corte transversal de franja',dimension:Math.round(best.y+best.h+kerf-trim)});}
+  if(rightW>0){cuts.push({n:cuts.length+1,axis:'v',x1:best.x+best.w+kerf,y1:f.y,x2:best.x+best.w+kerf,y2:f.y+best.h,from:f.y,to:f.y+best.h,at:best.x+best.w+kerf,part:id,kind:'Corte longitudinal de pieza',dimension:Math.round(best.x+best.w+kerf-trim)});}
+  if(rightW>0)free.push({x:f.x+best.w+kerf,y:f.y,w:rightW,h:best.h});
+  if(bottomH>0)free.push({x:f.x,y:f.y+best.h+kerf,w:f.w,h:bottomH});
+  // Remove rectangles wholly contained by another free rectangle.
+  free=free.filter((r,i)=>!free.some((q,j)=>i!==j&&q.x>=r.x-0.001&&q.y>=r.y-0.001&&q.x+q.w<=r.x+r.w+0.001&&q.y+q.h<=r.y+r.h+0.001));
+ }
+ // Remaining free rectangles represent recoverable offcuts / waste.
+ wasteRects=free.filter(r=>r.w>kerf&&r.h>kerf);
+ let used=placed.reduce((n,p)=>n+p.w*p.h,0),usable=innerL*innerW,offcutArea=wasteRects.reduce((n,r)=>n+r.w*r.h,0);
+ return {stockIndex:stocks.indexOf(stock),boardNo,boardRot,L,W,placed,cuts,wasteRects,used,usable,offcutArea,waste:Math.max(0,usable-used),remaining:items.slice(placed.length)};
+}
+function sortItems(a,mode){let x=[...a];if(mode===0)x.sort((a,b)=>b.L*b.W-a.L*a.W);if(mode===1)x.sort((a,b)=>Math.max(b.L,b.W)-Math.max(a.L,a.W));if(mode===2)x.sort((a,b)=>Math.min(b.L,b.W)-Math.min(a.L,a.W));if(mode===3)x.sort((a,b)=>b.L+b.W-a.L-a.W);return x;}
+function runHeuristic(stockIndex,boardRot,sortMode,scoreMode){
+ let st=stocks[stockIndex],remaining=expandPieces(stockIndex),boards=[],n=0;
+ while(remaining.length&&n<st.qty&&n<100){
+  let sorted=sortItems(remaining,sortMode),res=makePacking(sorted,st,n+1,boardRot,sortMode,scoreMode);
+  if(!res||!res.placed.length)break;
+  boards.push(res);let ids=new Set(res.placed.map(p=>p.id));remaining=remaining.filter(p=>!ids.has(p.id));n++;
+ }
+ return {boards,remaining};
+}
+function optimize(){
+ if(!stocks.length||!parts.length)return alert('Agrega por lo menos un tablero y una pieza.');
+ let allBoards=[],allLeft=0;
+ stocks.forEach((st,si)=>{
+  let candidates=[];
+  let rotations= $('allowBoardRotate').checked&&st.rotatable?[false,true]:[false];
+  for(let rot of rotations)for(let sm=0;sm<4;sm++)for(let sc=0;sc<3;sc++){let r=runHeuristic(si,rot,sm,sc);candidates.push(r);}
+  const wasteOf=r=>r.boards.reduce((n,x)=>n+x.waste,0);
+  candidates.sort((a,b)=>{
+   if(a.remaining.length!==b.remaining.length)return a.remaining.length-b.remaining.length;
+   if($('strategy').value==='waste')return wasteOf(a)-wasteOf(b)||a.boards.length-b.boards.length;
+   if($('strategy').value==='few')return a.boards.length-b.boards.length||wasteOf(a)-wasteOf(b);
+   return a.boards.length-b.boards.length||wasteOf(a)-wasteOf(b);
+  });
+  let best=candidates[0]||{boards:[],remaining:expandPieces(si)};
+  allBoards.push(...best.boards);allLeft+=best.remaining.length;
+ });
+ solutions=allBoards;renderResults(allLeft);saveLocal();
+}
+function renderResults(left){
+ let boardCount=solutions.length,partsPlaced=solutions.reduce((n,b)=>n+b.placed.length,0),used=solutions.reduce((n,b)=>n+b.used,0),usable=solutions.reduce((n,b)=>n+b.usable,0),waste=solutions.reduce((n,b)=>n+b.waste,0),eff=usable?used/usable*100:0,wastePct=usable?waste/usable*100:0,totalCuts=solutions.reduce((n,b)=>n+b.cuts.length,0);
+ $('summary').innerHTML=`<div class="metric"><b>${boardCount}</b><span>Tableros usados</span></div><div class="metric"><b>${eff.toFixed(1)}%</b><span>Aprovechamiento</span></div><div class="metric"><b>${wastePct.toFixed(1)}%</b><span>Desperdicio / retales</span></div><div class="metric"><b>${totalCuts}</b><span>Cortes numerados</span></div>`;
+ $('infoPanel').innerHTML=`<div class="formgrid"><div><small>Tableros usados</small><b>${boardCount}</b></div><div><small>Piezas ubicadas</small><b>${partsPlaced}</b></div><div><small>Área piezas</small><b>${(used/1e6).toFixed(3)} m²</b></div><div><small>Área sobrante</small><b>${(waste/1e6).toFixed(3)} m²</b></div><div><small>Piezas pendientes</small><b style="color:${left?'#c22':'#16845b'}">${left}</b></div></div>`;
+ $('boards').innerHTML=solutions.map((b,i)=>drawBoard(b,i)).join('')||'<div class="empty">No se pudieron ubicar piezas. Comprueba dimensiones, material y stock.</div>';
+ $('cutList').innerHTML=solutions.map((b,i)=>`<div style="font-weight:800;margin:8px 0 4px">Tablero ${i+1} · ${esc(stocks[b.stockIndex].label)}</div>`+b.cuts.map(c=>`<div class="cut-row"><span class="cut-n">${c.n}</span><div><b>${c.kind}</b><small>Posición ${c.dimension} mm · tramo ${Math.round(c.from)}–${Math.round(c.to)} mm · pieza ${c.part}</small></div></div>`).join('')).join('')||'<p class="footer-note">No hay cortes para mostrar.</p>';
+ if(left)$('infoPanel').innerHTML+=`<p style="color:#b72a2a;font-size:11px">Aviso: ${left} piezas no pudieron ubicarse con el stock actual.</p>`;
+}
+function drawBoard(b,index){
+ let st=stocks[b.stockIndex],scale=Math.min(900/b.L,570/b.W),sw=b.L*scale,sh=b.W*scale;
+ let palette=['#dcebe0','#f4e5c9','#dce8f3','#f1dfe4','#e8e1f3','#dcefeb','#f5ead8'];
+ let piecesSvg=b.placed.map((p,i)=>`<g><rect x="${p.x*scale}" y="${p.y*scale}" width="${p.w*scale}" height="${p.h*scale}" fill="${palette[i%palette.length]}" stroke="#4c626b" stroke-width="1.5"/><text x="${(p.x+p.w/2)*scale}" y="${(p.y+p.h/2)*scale-3}" text-anchor="middle" font-size="${Math.max(9,Math.min(16,12*scale))}" fill="#1d3038">${esc(p.label)}</text>${$('showDims').checked?`<text x="${(p.x+p.w/2)*scale}" y="${(p.y+p.h/2)*scale+12}" text-anchor="middle" font-size="${Math.max(8,Math.min(13,10*scale))}" fill="#43575e">${Math.round(p.w)}×${Math.round(p.h)}</text>`:''}<circle cx="${(p.x+15)*scale}" cy="${(p.y+15)*scale}" r="${Math.max(8,10*scale)}" fill="#1c6247"/><text x="${(p.x+15)*scale}" y="${(p.y+18)*scale}" text-anchor="middle" font-size="${Math.max(8,10*scale)}" fill="#fff" font-weight="bold">${p.number}</text></g>`).join('');
+ let cutsSvg=b.cuts.map(c=>{let x1=c.x1*scale,y1=c.y1*scale,x2=c.x2*scale,y2=c.y2*scale,mx=(x1+x2)/2,my=(y1+y2)/2;return `<g><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#d92727" stroke-width="2.5" stroke-dasharray="7 3"/><circle cx="${mx}" cy="${my}" r="10" fill="#d92727" stroke="#fff" stroke-width="1"/><text x="${mx}" y="${my+3.5}" text-anchor="middle" font-size="10" font-weight="bold" fill="#fff">${c.n}</text></g>`;}).join('');
+ let offcutSvg=b.wasteRects.map(r=>`<rect x="${r.x*scale}" y="${r.y*scale}" width="${r.w*scale}" height="${r.h*scale}" fill="#fff" stroke="#9aa8ad" stroke-dasharray="4 3"/>`).join('');
+ return `<div class="board-card"><div class="board-head"><div><strong>Tablero ${index+1} · ${esc(st.label)}</strong><br><small>${b.L} × ${b.W} mm · espesor ${st.thick} mm · ${b.boardRot?'tablero girado 90°':'orientación original'}</small></div><span class="badge" style="background:#e1f2e9;color:#176344;padding:4px 8px;border-radius:20px;font-size:10px">${b.placed.length} piezas</span></div><div class="board-body"><svg class="board-svg" viewBox="0 0 ${sw+2} ${sh+2}" role="img" aria-label="Plano de corte con líneas rojas numeradas"><defs><pattern id="hatch${index}" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M0 8L8 0" stroke="#d5dcdf" stroke-width="1"/></pattern></defs><rect x="1" y="1" width="${sw}" height="${sh}" fill="#fff" stroke="#243a43" stroke-width="2"/>${offcutSvg}${piecesSvg}${cutsSvg}</svg><div class="legend"><span><i style="background:#d92727"></i>Pasadas de sierra numeradas</span><span>🟩 N.º de pieza</span><span>□ Retales / sobrantes</span></div><div style="font-size:10px;color:#68777d">Piezas: ${b.placed.map(p=>`${p.number}. ${esc(p.label)} ${p.w}×${p.h} mm`).join(' · ')}</div></div></div>`;
+}
+$('calculate').onclick=optimize;
+$('printBtn').onclick=()=>window.print();
+$('clearBtn').onclick=()=>{if(confirm('¿Borrar los resultados y todos los datos guardados de este dispositivo?')){stocks=[];parts=[];solutions=[];localStorage.removeItem('panelcutpro-v1');renderInputs();$('boards').innerHTML='<div class="empty">Agrega tableros y piezas y vuelve a optimizar.</div>';renderResults(0);}};
+['kerf','trim','strategy','allowBoardRotate','allowPieceRotate','showDims'].forEach(id=>$(id).addEventListener('change',saveLocal));
+$('exportPieces').onclick=()=>csvOut('piezas_panelcut.csv',[['largo_mm','ancho_mm','cantidad','etiqueta','material'],...parts.map(p=>[p.L,p.W,p.qty,p.label,stocks[p.stock]?.label])]);
+$('templateCsv').onclick=()=>csvOut('plantilla_piezas.csv',[['largo_mm','ancho_mm','cantidad','etiqueta','material'],[500,300,2,'Costado','Melamina 18 mm']]);
+function csvOut(name,rows){let txt=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n');let a=document.createElement('a'),u=URL.createObjectURL(new Blob(['\ufeff'+txt],{type:'text/csv;charset=utf-8'}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);}
+$('importBtn').onclick=()=>$('csvFile').click();
+$('csvFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;let txt=(await f.text()).replace(/^\ufeff/,'');let lines=txt.split(/\r?\n/).filter(Boolean),sep=lines[0].includes(';')?';':',';let rows=lines.map(l=>l.split(sep).map(x=>x.trim().replace(/^"|"$/g,'')));let start=/largo|length/i.test(rows[0][0])?1:0;for(let r of rows.slice(start)){let si=stocks.findIndex(s=>s.label.toLowerCase()===(r[4]||'').toLowerCase());if(si<0)si=0;if(r.length>=3&&Number(r[0])>0&&Number(r[1])>0&&Number(r[2])>0)parts.push({stock:si,L:Number(r[0]),W:Number(r[1]),qty:Math.floor(Number(r[2])),label:r[3]||'Pieza',rotatable:true});}renderInputs();e.target.value='';alert('CSV importado. Comprueba el material asignado a cada pieza.');};
+$('saveProject').onclick=()=>{let d={stocks,parts,settings:{kerf:$('kerf').value,trim:$('trim').value,allowBoardRotate:$('allowBoardRotate').checked,allowPieceRotate:$('allowPieceRotate').checked}};let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));a.href=u;a.download='proyecto_panelcut.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);};
+$('loadProject').onclick=()=>$('jsonFile').click();
+$('jsonFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let d=JSON.parse(await f.text());stocks=d.stocks||[];parts=d.parts||[];renderInputs();alert('Proyecto cargado.');}catch(err){alert('No se pudo abrir el proyecto.');}e.target.value='';};
+$('helpBtn').onclick=()=>$('modal').style.display='flex';$('closeHelp').onclick=()=>$('modal').style.display='none';$('modal').onclick=e=>{if(e.target===$('modal'))$('modal').style.display='none';};
+loadLocal();
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body></html>
