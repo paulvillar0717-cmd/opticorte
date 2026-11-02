@@ -1,0 +1,17 @@
+OPTICORTE PRO - PLANOS CON LINEAS ROJAS NUMERADAS
+===================================================
+Sube TODOS los archivos de esta carpeta a la raíz del repositorio GitHub Pages y reemplaza los anteriores.
+
+En Planos, cada tablero dibuja las pasadas de sierra como líneas rojas discontinuas numeradas. La tabla de abajo usa exactamente la misma numeración e indica orientación, posición y tramo del corte.
+
+Archivos:
+- index.html
+- manifest.webmanifest
+- sw.js
+- icon-192.png
+- icon-512.png
+- LEEME.txt
+
+La secuencia se genera a partir de divisiones rectangulares tipo guillotina. Es una guía geométrica para planificar el trabajo, no una simulación de todos los movimientos del carro ni un programa CNC. Confirma la referencia de medida, el tope, el sentido de avance, el kerf real y la sujeción de cada pieza en tu escuadradora. Usa siempre resguardos y empujadores. Revisa cada plano antes de cortar.
+
+Importación/exportación CSV compatible con Excel; no XLSX nativo. El optimizador es heurístico y puede no encontrar el aprovechamiento global óptimo.

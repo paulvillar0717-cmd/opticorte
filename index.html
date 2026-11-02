@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#183b2b">
+<meta name="description" content="OptiCorte Pro: optimizador de cortes de tableros para taller.">
+<link rel="manifest" href="./manifest.webmanifest">
+<title>OptiCorte Pro</title>
+<style>
+:root{--green:#1d5b3b;--green2:#2f7950;--ink:#1e2922;--muted:#68756c;--line:#dce5de;--bg:#f2f5f2;--white:#fff;--red:#b64037}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+header{background:#183b2b;color:#fff;padding:16px max(14px,calc((100% - 1180px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:11px}.logo{width:40px;height:40px;border-radius:11px;background:#fff;color:var(--green);display:grid;place-items:center;font-size:23px;font-weight:900}
+h1{font-size:21px;margin:0}header small{color:#c8d9ce}.status{font-size:12px;color:#d6e7dc}
+main{max-width:1180px;margin:auto;padding:16px}
+nav{display:flex;gap:6px;overflow:auto;padding:5px;background:#e5ece6;border-radius:12px;margin-bottom:14px}
+nav button{white-space:nowrap;border:0;border-radius:8px;padding:11px 14px;background:transparent;color:#33483a;font-weight:700;cursor:pointer}
+nav button.active{background:white;color:var(--green);box-shadow:0 1px 5px #0001}
+.panel{display:none}.panel.active{display:block}
+.card{background:white;border:1px solid var(--line);border-radius:13px;padding:16px;margin-bottom:13px}
+h2{font-size:17px;margin:0 0 13px}h3{font-size:14px;margin:0 0 9px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px}
+label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px}
+input,select{width:100%;padding:10px;border:1px solid #ccd8ce;border-radius:8px;background:#fff;font:inherit;color:var(--ink);min-width:0}
+input:focus,select:focus{outline:2px solid #a8cbb4;border-color:var(--green2)}
+.btn{border:1px solid #d3ded5;background:#edf2ee;color:#294634;border-radius:8px;padding:10px 13px;font-weight:700;cursor:pointer}
+.btn.primary{background:var(--green);color:white;border-color:var(--green)}.btn.danger{background:#fff1ef;color:var(--red);border-color:#f0d4d0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left}th{background:#f6f9f6;color:var(--muted);font-size:11px;text-transform:uppercase}
+td button{padding:6px 9px}.note{font-size:12px;color:var(--muted);line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px}.stat{background:#f5f8f5;border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--muted);font-size:12px}.stat b{display:block;font-size:22px;color:var(--green)}
+.board{background:#fbfcfb;border:1px solid var(--line);padding:12px;border-radius:11px;margin:12px 0}.board svg{width:100%;height:auto;max-height:620px;background:white;border:1px solid #dbe2dc}
+.badge{display:inline-block;background:#e8f2eb;color:var(--green);border-radius:20px;padding:4px 8px;font-size:11px;font-weight:700}
+.hidden{display:none!important}.footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
+@media(max-width:600px){main{padding:9px}header{padding:13px}h1{font-size:19px}.card{padding:12px}nav button{padding:10px}.actions .btn{flex:1}}
+@media print{header,nav,#config,#materials,#pieces,#help,.noprint,.footer{display:none!important}main{padding:0}.panel#plans{display:block!important}.card{border:0;padding:0}.board{break-after:page;border:0}.board:last-child{break-after:auto}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo">O</div><div><h1>OptiCorte Pro</h1><small>Planificación inteligente de cortes</small></div></div><div class="status" id="saveStatus">● Guardado local</div></header>
+<main>
+<nav class="noprint">
+<button data-tab="config">1. Configuración</button><button data-tab="materials">2. Tableros</button><button class="active" data-tab="pieces">3. Piezas</button><button data-tab="plans">4. Planos</button><button data-tab="help">Ayuda</button>
+</nav>
+<section id="config" class="panel">
+<div class="card"><h2>Parámetros de corte</h2><div class="grid">
+<div><label for="kerf">Ancho de corte / disco (mm)</label><input id="kerf" type="number" min="0" step="0.1" value="3.2"></div>
+<div><label for="margin">Margen de borde (mm)</label><input id="margin" type="number" min="0" step="0.5" value="10"></div>
+<div><label for="method">Criterio de distribución</label><select id="method"><option value="area">Mayor área primero</option><option value="long">Mayor largo primero</option><option value="short">Mayor ancho primero</option></select></div>
+<div><label for="rotate">Permitir girar piezas</label><select id="rotate"><option value="yes">Sí, girar 90°</option><option value="no">No girar</option></select></div>
+</div><p class="note">El kerf representa el material consumido por el disco. El margen se reserva en los cuatro bordes del tablero.</p></div>
+</section>
+<section id="materials" class="panel">
+<div class="card"><h2>Agregar formato de tablero</h2><div class="grid">
+<div><label>Material</label><input id="matName" value="Melamina"></div><div><label>Espesor (mm)</label><input id="matThick" type="number" value="18" min="1"></div>
+<div><label>Largo (mm)</label><input id="matL" type="number" value="2440" min="1"></div><div><label>Ancho (mm)</label><input id="matW" type="number" value="1830" min="1"></div>
+<div><label>Stock (tableros)</label><input id="matStock" type="number" value="10" min="1"></div><div><label>Precio unitario (S/)</label><input id="matPrice" type="number" value="0" min="0" step="0.01"></div>
+</div><div class="actions"><button class="btn primary" id="addMat">+ Agregar tablero</button></div></div>
+<div class="card"><h2>Tableros disponibles</h2><div class="tablewrap"><table><thead><tr><th>Material</th><th>Espesor</th><th>Formato L × A</th><th>Stock</th><th>Precio</th><th></th></tr></thead><tbody id="matRows"></tbody></table></div></div>
+</section>
+<section id="pieces" class="panel active">
+<div class="card"><h2>Agregar piezas para cortar</h2><div class="grid">
+<div><label>Código / descripción</label><input id="pCode" value="Pieza"></div><div><label>Material</label><select id="pMat"></select></div>
+<div><label>Largo</label><input id="pL" type="number" value="800" min="1"></div><div><label>Ancho</label><input id="pW" type="number" value="400" min="1"></div>
+<div><label>Cantidad</label><input id="pQty" type="number" value="2" min="1"></div><div><label>Unidad</label><select id="pUnit"><option value="mm">Milímetros (mm)</option><option value="cm" selected>Centímetros (cm)</option></select></div>
+<div><label>Veta</label><select id="pGrain"><option value="free">Sin dirección</option><option value="length">Veta a lo largo (no girar)</option></select></div>
+</div><div class="actions"><button class="btn primary" id="addPiece">+ Agregar piezas</button><button class="btn" id="sample">Cargar ejemplo</button></div><p class="note">Puedes ingresar medidas en mm o cm. Se convierten internamente a milímetros.</p></div>
+<div class="card"><h2>Lista de piezas <span class="badge" id="pieceCount">0 piezas</span></h2><div class="tablewrap"><table><thead><tr><th>Código</th><th>Material</th><th>Largo × ancho (mm)</th><th>Cantidad</th><th>Veta</th><th></th></tr></thead><tbody id="pieceRows"></tbody></table></div>
+<div class="actions"><button class="btn" id="csvTemplate">Plantilla CSV</button><button class="btn" id="importCsv">Importar CSV</button><button class="btn" id="exportCsv">Exportar piezas CSV</button><input id="fileCsv" type="file" accept=".csv,text/csv" class="hidden"></div></div>
+</section>
+<section id="plans" class="panel">
+<div class="card"><h2>Optimización y planos de corte</h2><div class="actions noprint"><button class="btn primary" id="optimize">⚙ Optimizar cortes</button><button class="btn" id="print">Imprimir / Guardar PDF</button><button class="btn" id="backup">Respaldar proyecto</button><button class="btn" id="restore">Abrir respaldo</button><input id="backupFile" type="file" accept=".json" class="hidden"></div><div id="summary" class="stats" style="margin-top:14px"></div><div id="planOutput"><p class="note">Agrega tableros y piezas, luego pulsa «Optimizar cortes».</p></div><div id="cutGuide"></div></div>
+</section>
+<section id="help" class="panel"><div class="card"><h2>Cómo usar OptiCorte Pro</h2><ol><li>Registra los formatos y existencias de tableros.</li><li>Ingresa las piezas manualmente o impórtalas desde CSV de Excel.</li><li>Configura kerf, margen y rotación.</li><li>Ejecuta la optimización y sigue la guía numerada de pasadas para cada tablero.</li><li>Imprime o guarda el resultado como PDF desde el navegador.</li></ol><p class="note"><b>Compatibilidad:</b> CSV compatible con Excel; no es importación XLSX nativa. Esta versión usa una heurística rectangular 2D, las líneas rojas numeradas muestran una secuencia geométrica de cortes tipo guillotina. Es una guía de planificación, no una programación automática ni certificada de máquina. Verifica medidas, veta, kerf, topes y sentido de alimentación antes de cortar.</p></div></section>
+<div class="footer">OptiCorte Pro · Proyecto guardado en este dispositivo · Funciona sin conexión tras la primera carga</div>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+let materials=[], pieces=[], plans=[];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=id=>Math.max(0,Number($(id).value)||0);
+function save(){localStorage.setItem('opticortepro_v1',JSON.stringify({materials,pieces,kerf:$('kerf').value,margin:$('margin').value,method:$('method').value,rotate:$('rotate').value}));$('saveStatus').textContent='● Guardado local';}
+function load(){try{const d=JSON.parse(localStorage.getItem('opticortepro_v1')||'{}');materials=Array.isArray(d.materials)?d.materials:[];pieces=Array.isArray(d.pieces)?d.pieces:[];['kerf','margin','method','rotate'].forEach(k=>{if(d[k]!==undefined)$(k).value=d[k]});}catch(e){materials=[];pieces=[];}render();}
+function render(){ $('matRows').innerHTML=materials.map((m,i)=>`<tr><td>${esc(m.name)}</td><td>${m.thick}</td><td>${m.L} × ${m.W}</td><td>${m.stock}</td><td>S/ ${Number(m.price).toFixed(2)}</td><td><button class="btn danger" onclick="delMat(${i})">Quitar</button></td></tr>`).join('')||'<tr><td colspan="6">Todavía no hay tableros registrados.</td></tr>';
+$('pMat').innerHTML=materials.map((m,i)=>`<option value="${i}">${esc(m.name)} · ${m.thick} mm</option>`).join('')||'<option value="">Primero agrega un tablero</option>';
+$('pieceRows').innerHTML=pieces.map((p,i)=>`<tr><td>${esc(p.code)}</td><td>${esc(materials[p.mat]?.name||'Sin material')}</td><td>${p.L} × ${p.W}</td><td>${p.qty}</td><td>${p.grain==='length'?'A lo largo':'Libre'}</td><td><button class="btn danger" onclick="delPiece(${i})">Quitar</button></td></tr>`).join('')||'<tr><td colspan="6">Todavía no hay piezas registradas.</td></tr>';
+$('pieceCount').textContent=pieces.reduce((a,p)=>a+p.qty,0)+' piezas';save();}
+window.delMat=i=>{materials.splice(i,1);pieces=pieces.filter(p=>p.mat!==i).map(p=>({...p,mat:p.mat>i?p.mat-1:p.mat}));render();};
+window.delPiece=i=>{pieces.splice(i,1);render();};
+$('addMat').onclick=()=>{let m={name:$('matName').value.trim()||'Material',thick:num('matThick'),L:num('matL'),W:num('matW'),stock:Math.max(1,Math.floor(num('matStock'))),price:num('matPrice')};if(!m.thick||!m.L||!m.W)return alert('Completa espesor y medidas del tablero.');materials.push(m);render();};
+$('addPiece').onclick=()=>{let mat=Number($('pMat').value),factor=$('pUnit').value==='cm'?10:1;let p={code:$('pCode').value.trim()||'Pieza',mat,L:num('pL')*factor,W:num('pW')*factor,qty:Math.max(1,Math.floor(num('pQty'))),grain:$('pGrain').value};if(!materials.length)return alert('Primero agrega un tablero.');if(!p.L||!p.W)return alert('Ingresa largo y ancho válidos.');pieces.push(p);render();};
+$('sample').onclick=()=>{if(!materials.length)materials.push({name:'Melamina',thick:18,L:2440,W:1830,stock:10,price:0});let m=0;pieces.push({code:'Lateral',mat:m,L:800,W:400,qty:2,grain:'free'},{code:'Entrepaño',mat:m,L:600,W:400,qty:3,grain:'free'},{code:'Puerta',mat:m,L:700,W:350,qty:2,grain:'length'});render();};
+function csvDownload(name,rows){let csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n');let a=document.createElement('a'),u=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);}
+$('csvTemplate').onclick=()=>csvDownload('plantilla_piezas_opticorte.csv',[['codigo','material','largo_mm','ancho_mm','cantidad','veta'],['Costado','Melamina',800,400,2,'libre']]);
+$('exportCsv').onclick=()=>csvDownload('piezas_opticorte.csv',[['codigo','material','largo_mm','ancho_mm','cantidad','veta'],...pieces.map(p=>[p.code,materials[p.mat]?.name,p.L,p.W,p.qty,p.grain])]);
+$('importCsv').onclick=()=>$('fileCsv').click();
+$('fileCsv').onchange=async e=>{let f=e.target.files[0];if(!f)return;let txt=(await f.text()).replace(/^\ufeff/,'');let lines=txt.split(/\r?\n/).filter(Boolean);let sep=lines[0].includes(';')?';':',';let rows=lines.map(l=>l.split(sep).map(x=>x.trim().replace(/^"|"$/g,'')));let start=/codigo|código|material/i.test(rows[0][0])?1:0;for(let r of rows.slice(start)){if(r.length<5)continue;let mi=materials.findIndex(m=>m.name.toLowerCase()===r[1].toLowerCase());if(mi<0){materials.push({name:r[1]||'Material',thick:18,L:2440,W:1830,stock:10,price:0});mi=materials.length-1;}let L=Number(r[2]),W=Number(r[3]),qty=Number(r[4]);if(L>0&&W>0&&qty>0)pieces.push({code:r[0]||'Pieza',mat:mi,L,W,qty:Math.floor(qty),grain:(r[5]||'').toLowerCase().includes('largo')?'length':'free'});}render();e.target.value='';alert('Importación terminada. Revisa materiales y medidas.');};
+function expand(){let a=[];pieces.forEach((p,idx)=>{for(let n=0;n<p.qty;n++)a.push({id:idx+'_'+n,code:p.code,L:p.L,W:p.W,grain:p.grain,mat:p.mat});});return a;}
+function packBoard(items,mat,boardIndex){let margin=num('margin'),kerf=num('kerf'),usableL=mat.L-2*margin,usableW=mat.W-2*margin;if(usableL<=0||usableW<=0)return null;
+let free=[{x:margin,y:margin,w:usableL,h:usableW}],placed=[],cuts=[];
+for(const item of items){let best=null;for(let fi=0;fi<free.length;fi++){let f=free[fi];for(let rot=0;rot<($('rotate').value==='yes'&&item.grain!=='length'?2:1);rot++){let w=rot?item.W:item.L,h=rot?item.L:item.W;if(w<=f.w&&h<=f.h){let score=Math.min(f.w-w,f.h-h)*100000+Math.max(f.w-w,f.h-h);if(!best||score<best.score)best={fi,rot,w,h,x:f.x,y:f.y,score};}}}
+if(!best)return {placed,remaining:items.slice(placed.length),cuts};
+let f=free.splice(best.fi,1)[0],pieceNo=placed.length+1;placed.push({...item,x:best.x,y:best.y,w:best.w,h:best.h,rot:best.rot,order:pieceNo});
+let rw=f.w-best.w-kerf,rh=f.h-best.h-kerf;
+if(rh>0)cuts.push({n:cuts.length+1,piece:pieceNo,kind:'Longitudinal',axis:'horizontal',at:best.y+best.h+kerf,from:f.x,to:f.x+f.w,description:'Separar franja a lo ancho del tablero'});
+if(rw>0)cuts.push({n:cuts.length+1,piece:pieceNo,kind:'Transversal',axis:'vertical',at:best.x+best.w+kerf,from:best.y,to:best.y+best.h,description:'Dimensionar longitud de la pieza dentro de la franja'});
+if(rw>0)free.push({x:f.x+best.w+kerf,y:f.y,w:rw,h:best.h});
+if(rh>0)free.push({x:f.x,y:f.y+best.h+kerf,w:f.w,h:rh});
+free=free.filter((r,i)=>!free.some((q,j)=>i!==j&&q.x>=r.x&&q.y>=r.y&&q.x+q.w<=r.x+r.w&&q.y+q.h<=r.y+r.h));
+}
+return {placed,remaining:[],cuts};}
+function optimize(){if(!materials.length||!pieces.length)return alert('Agrega al menos un tablero y una pieza.');let kerf=num('kerf');plans=[];let totalLeft=0;
+materials.forEach((m,mi)=>{let todo=expand().filter(p=>p.mat===mi);if($('method').value==='long')todo.sort((a,b)=>Math.max(b.L,b.W)-Math.max(a.L,a.W));else if($('method').value==='short')todo.sort((a,b)=>Math.min(b.L,b.W)-Math.min(a.L,a.W));else todo.sort((a,b)=>b.L*b.W-a.L*a.W);
+let b=0;while(todo.length&&b<m.stock){let result=packBoard(todo,m,b);if(!result||!result.placed.length)break;plans.push({mat:mi,index:b+1,placed:result.placed,cuts:result.cuts||[],area:m.L*m.W});todo=result.remaining;b++;}totalLeft+=todo.length;});
+renderPlans(totalLeft);save();}
+function renderPlans(left){let total=plans.length,used=plans.reduce((s,p)=>s+p.placed.reduce((a,x)=>a+x.w*x.h,0),0),boardArea=plans.reduce((s,p)=>s+p.area,0),pct=boardArea?100*used/boardArea:0;
+$('summary').innerHTML=`<div class="stat"><b>${total}</b>Tableros utilizados</div><div class="stat"><b>${plans.reduce((s,p)=>s+p.placed.length,0)}</b>Piezas ubicadas</div><div class="stat"><b>${pct.toFixed(1)}%</b>Área ocupada</div><div class="stat"><b class="${left?'danger':''}">${left}</b>Piezas pendientes</div>`;
+$('planOutput').innerHTML=plans.map(p=>{let m=materials[p.mat],scale=Math.min(900/m.L,540/m.W),sw=m.L*scale,sh=m.W*scale;let colors=['#dcebe0','#f4e5c9','#dce8f3','#f1dfe4','#e8e1f3','#dcefeb'];let rects=p.placed.map((x,i)=>`<g><rect x="${x.x*scale}" y="${x.y*scale}" width="${x.w*scale}" height="${x.h*scale}" fill="${colors[i%colors.length]}" stroke="#315a40" stroke-width="2"/><circle cx="${(x.x+18)*scale}" cy="${(x.y+18)*scale}" r="${Math.max(9,12*scale)}" fill="#1d5b3b"/><text x="${(x.x+18)*scale}" y="${(x.y+22)*scale}" text-anchor="middle" font-size="${Math.max(9,12*scale)}" font-weight="bold" fill="#fff">${x.order}</text><text x="${(x.x+x.w/2)*scale}" y="${(x.y+x.h/2)*scale-3}" text-anchor="middle" font-size="${Math.max(10,Math.min(17,12*scale))}" fill="#1d3024">${esc(x.code)}</text><text x="${(x.x+x.w/2)*scale}" y="${(x.y+x.h/2)*scale+14}" text-anchor="middle" font-size="${Math.max(9,Math.min(14,10*scale))}" fill="#405348">${Math.round(x.w)} × ${Math.round(x.h)} mm</text></g>`).join('');
+let cutLines=p.cuts.map(c=>{let x1=c.axis==='vertical'?c.at*scale:c.from*scale,y1=c.axis==='horizontal'?c.at*scale:c.from*scale,x2=c.axis==='vertical'?c.at*scale:c.to*scale,y2=c.axis==='horizontal'?c.at*scale:c.to*scale,mx=(x1+x2)/2,my=(y1+y2)/2;return `<g><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#e32626" stroke-width="3" stroke-dasharray="7 3"/><circle cx="${mx}" cy="${my}" r="11" fill="#d71920" stroke="#fff" stroke-width="1.5"/><text x="${mx}" y="${my+4}" text-anchor="middle" font-size="11" font-weight="bold" fill="#fff">${c.n}</text></g>`;}).join('');
+let cutRows=p.cuts.length?p.cuts.map(c=>`<tr><td><b>${c.n}</b></td><td>${c.kind}</td><td>${c.axis==='horizontal'?'Franja a lo ancho (línea horizontal)':'Corte transversal (línea vertical)'}</td><td>${Math.round(c.at)} mm</td><td>${Math.round(c.from)}–${Math.round(c.to)} mm</td><td>${c.piece}</td></tr>`).join(''):'<tr><td colspan="6">No se requieren cortes internos adicionales.</td></tr>';
+return `<div class="board"><h3>${esc(m.name)} · Tablero ${p.index} <span class="badge">${p.placed.length} piezas</span></h3><p class="note">Formato ${m.L} × ${m.W} mm · Espesor ${m.thick} mm · Borde reservado ${$('margin').value} mm · Kerf ${kerf} mm</p><svg viewBox="0 0 ${sw+4} ${sh+4}" role="img" aria-label="Plano con líneas rojas numeradas de corte"><rect x="2" y="2" width="${sw}" height="${sh}" fill="#fff" stroke="#263d2d" stroke-width="3"/>${rects}${cutLines}</svg><p class="note">${p.placed.map(x=>`${x.order}. ${esc(x.code)}: ${Math.round(x.w)} × ${Math.round(x.h)} mm`).join(' · ')}</p><h3>Guía de corte para escuadradora</h3><p class="note"><b style="color:#d71920">━ Línea roja numerada:</b> pasada de sierra. Ejecuta los números en orden. Las posiciones se miden desde el borde superior (líneas horizontales) o izquierdo (líneas verticales) del tablero dibujado. Confirma la referencia y el tope en tu máquina antes de cada pasada.</p><div class="tablewrap"><table><thead><tr><th>Paso</th><th>Tipo</th><th>Operación</th><th>Posición</th><th>Tramo</th><th>Pieza</th></tr></thead><tbody>${cutRows}</tbody></table></div></div>`;}).join('')+(left?`<p class="note danger">Atención: ${left} piezas no pudieron ubicarse con el stock disponible o las medidas actuales. Revisa el stock, rotación y dimensiones.</p>`:'')||'<p class="note">No se pudo ubicar ninguna pieza. Revisa medidas, margen y formatos.</p>';}
+$('optimize').onclick=optimize;$('print').onclick=()=>window.print();
+$('backup').onclick=()=>{let data={materials,pieces,kerf:$('kerf').value,margin:$('margin').value,method:$('method').value,rotate:$('rotate').value};let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.href=u;a.download='proyecto_opticorte.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);};
+$('restore').onclick=()=>$('backupFile').click();$('backupFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let d=JSON.parse(await f.text());materials=d.materials||[];pieces=d.pieces||[];['kerf','margin','method','rotate'].forEach(k=>{if(d[k]!==undefined)$(k).value=d[k]});render();alert('Respaldo cargado.');}catch(err){alert('No se pudo leer el respaldo.');}e.target.value='';};
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab));});
+['kerf','margin','method','rotate'].forEach(id=>$(id).addEventListener('change',save));
+load();
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body></html>
