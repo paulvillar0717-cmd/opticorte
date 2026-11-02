@@ -1,15 +1,24 @@
 {
-  "name":"OptiCorte - Optimización de cortes",
-  "short_name":"OptiCorte",
-  "description":"Optimiza tableros y genera planos de corte para taller.",
-  "start_url":"./index.html",
-  "scope":"./",
-  "display":"standalone",
-  "background_color":"#f2f5f2",
-  "theme_color":"#14251f",
-  "orientation":"portrait",
-  "icons":[
-    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
-    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"}
+  "name": "OptiCorte Pro",
+  "short_name": "OptiCorte",
+  "description": "Planificación inteligente de cortes de tableros",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f5f2",
+  "theme_color": "#183b2b",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
   ]
 }
